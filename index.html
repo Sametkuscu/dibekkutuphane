@@ -1465,6 +1465,41 @@
             from { opacity: 0.8; }
             to { opacity: 1; }
         }
+        /* 🚨 Okuma Süresi Dolunca Titreme ve Kırmızı Alarm Efekti */
+        .timer-box.timer-expired {
+            border-color: #ff1744 !important;
+            animation: timerBoxShake 0.45s ease-in-out infinite, timerBoxRedPulse 0.8s infinite alternate !important;
+        }
+
+        .timer-display.timer-expired {
+            background: #d50000 !important;
+            color: #ffffff !important;
+            border-color: #b71c1c !important;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            animation: timerDisplayPulse 0.5s infinite alternate !important;
+        }
+
+        @keyframes timerBoxShake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            20% { transform: translateX(-9px) rotate(-1.5deg); }
+            40% { transform: translateX(9px) rotate(1.5deg); }
+            60% { transform: translateX(-7px) rotate(-1deg); }
+            80% { transform: translateX(7px) rotate(1deg); }
+        }
+
+        @keyframes timerBoxRedPulse {
+            from {
+                box-shadow: 0 0 10px rgba(255, 23, 68, 0.5), 4px 4px 0 var(--border-color);
+            }
+            to {
+                box-shadow: 0 0 35px rgba(255, 23, 68, 0.95), 6px 6px 0 #b71c1c;
+            }
+        }
+
+        @keyframes timerDisplayPulse {
+            from { transform: scale(1); filter: brightness(1); }
+            to { transform: scale(1.03); filter: brightness(1.2); }
+        }
         .speed-preview-badge {
             background: var(--bg-color);
             border: 2px dashed var(--border-color);
@@ -19531,9 +19566,17 @@
             if (display) display.textContent = str;
         }
 
+        function clearTimerExpiredEffects() {
+            const box = document.querySelector(".timer-box");
+            const display = document.getElementById("timerDisplay");
+            if (box) box.classList.remove("timer-expired");
+            if (display) display.classList.remove("timer-expired");
+        }
+
         function startTimer() {
             if (isTimerRunning) return;
             getTimerAudioContext(); // Kullanıcı tıklamasıyla ses motorunun kilidini aç
+            clearTimerExpiredEffects();
             isTimerRunning = true;
             const startBtn = document.getElementById("startTimerBtn");
             const pauseBtn = document.getElementById("pauseTimerBtn");
@@ -19555,7 +19598,12 @@
                     isTimerRunning = false;
                     if (startBtn) startBtn.style.display = "inline-flex";
                     if (pauseBtn) pauseBtn.style.display = "none";
-                    if (display) display.classList.remove("active");
+                    if (display) {
+                        display.classList.remove("active");
+                        display.classList.add("timer-expired");
+                    }
+                    const box = document.querySelector(".timer-box");
+                    if (box) box.classList.add("timer-expired");
                     if (alertDiv) alertDiv.style.display = "block";
                     playTimerFinishSound();
                     showToast("⏱️ Süre doldu! Okunan kelimeleri sayınız.");
@@ -19579,6 +19627,7 @@
 
         function resetTimer() {
             pauseTimer();
+            clearTimerExpiredEffects();
             timerRemainingSeconds = timerInitialSeconds;
             updateTimerDisplay();
             const alertDiv = document.getElementById("timerAlert");
