@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "dibekkutuphanesi",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "walkthrough.md",
+      "firebase_yayinla.bat"
+    ]
+  }
+}
