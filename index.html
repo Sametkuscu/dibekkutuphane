@@ -22638,6 +22638,23 @@ S.No Öğrenci No Adı Soyadı Cinsiyeti
         const LOGIN_KEY = "dibek-login-session";
 
         function checkLoginState() {
+            // URL üzerinden Güvenli Otomatik Giriş Kontrolü
+            const urlParams = new URLSearchParams(window.location.search);
+            const autoAuth = urlParams.get("auth") || urlParams.get("token") || urlParams.get("key");
+
+            if (autoAuth === "dibek_485396" || autoAuth === "dibek_master") {
+                sessionStorage.setItem(LOGIN_KEY, "true");
+                localStorage.setItem(LOGIN_KEY, "true");
+                localStorage.setItem(CURRENT_SCHOOL_KEY, "dibek");
+                currentSchoolId = "dibek";
+                currentSchool = SCHOOL_PROFILES["dibek"];
+                // Güvenlik: Adres çubuğundaki parametreyi anında temizle (öğrenciler göremesin)
+                window.history.replaceState({}, document.title, window.location.pathname);
+                showApp();
+                showToast("👋 Hoş geldiniz Samet Öğretmenim, güvenli giriş yapıldı.");
+                return;
+            }
+
             const session = sessionStorage.getItem(LOGIN_KEY) || localStorage.getItem(LOGIN_KEY);
             if (session === "true") {
                 showApp();

@@ -7,7 +7,9 @@
       "**/.*",
       "**/node_modules/**",
       "walkthrough.md",
-      "firebase_yayinla.bat"
+      "firebase_yayinla.bat",
+      "**/*.bat",
+      "**/*.url"
     ]
   }
 }
